@@ -23,7 +23,7 @@
     <form method="post" id="verify2faForm">
         <input type="hidden" name="Input.Code" id="otpHidden" />
         <div class="mb-4">
-            <div class="form-otp otp-lg" id="verifyOtp" role="group" aria-label="Verification code">
+            <fieldset class="form-otp otp-lg" id="verifyOtp" aria-label="Verification code">
                 <input class="otp-c" type="text">
                 <input class="otp-c" type="text">
                 <input class="otp-c" type="text">
@@ -31,7 +31,7 @@
                 <input class="otp-c" type="text">
                 <input class="otp-c" type="text">
                 <input class="otp-c" type="text">
-            </div>
+            </fieldset>
             <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-1"></span>
         </div>
         <button type="submit" class="btn btn-p w-100" id="verifyBtn">Verify</button>

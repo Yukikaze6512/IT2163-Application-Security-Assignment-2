@@ -24,42 +24,42 @@
     <form method="post" enctype="multipart/form-data" id="registerForm">
         <div class="row g-2 mb-2">
             <div class="col-6">
-                <label asp-for="Input.FirstName" class="form-label">First Name</label>
-                <input asp-for="Input.FirstName" class="form-control" maxlength="50" placeholder="John" />
+                <label asp-for="Input.FirstName" class="form-label" for="reg-fname">First Name</label>
+                <input asp-for="Input.FirstName" class="form-control" maxlength="50" placeholder="John" id="reg-fname" />
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="col-6">
-                <label asp-for="Input.LastName" class="form-label">Last Name</label>
-                <input asp-for="Input.LastName" class="form-control" maxlength="50" placeholder="Doe" />
+                <label asp-for="Input.LastName" class="form-label" for="reg-lname">Last Name</label>
+                <input asp-for="Input.LastName" class="form-control" maxlength="50" placeholder="Doe" id="reg-lname" />
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
         </div>
         <div class="row g-2 mb-2">
             <div class="col-6">
-                <label asp-for="Input.Gender" class="form-label">Gender</label>
-                <select asp-for="Input.Gender" class="form-select"><option value="">Select&hellip;</option><option value="Male">Male</option><option value="Female">Female</option></select>
+                <label asp-for="Input.Gender" class="form-label" for="reg-gender">Gender</label>
+                <select asp-for="Input.Gender" class="form-select" id="reg-gender"><option value="">Select&hellip;</option><option value="Male">Male</option><option value="Female">Female</option></select>
                 <span asp-validation-for="Input.Gender" class="text-danger"></span>
             </div>
             <div class="col-6">
-                <label asp-for="Input.DateOfBirth" class="form-label">Date of Birth</label>
-                <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
+                <label asp-for="Input.DateOfBirth" class="form-label" for="reg-dob">Date of Birth</label>
+                <input asp-for="Input.DateOfBirth" class="form-control" type="date" id="reg-dob" />
                 <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
             </div>
         </div>
         <div class="mb-2">
-            <label asp-for="Input.NRIC" class="form-label">NRIC</label>
-            <input asp-for="Input.NRIC" class="form-control" placeholder="S1234567A" maxlength="9" />
+            <label asp-for="Input.NRIC" class="form-label" for="reg-nric">NRIC</label>
+            <input asp-for="Input.NRIC" class="form-control" placeholder="S1234567A" maxlength="9" id="reg-nric" />
             <span asp-validation-for="Input.NRIC" class="text-danger"></span>
             <div class="form-text">Letter + 7 digits + Letter</div>
         </div>
         <div class="mb-2">
-            <label asp-for="Input.Email" class="form-label">Email</label>
-            <input asp-for="Input.Email" class="form-control" type="email" placeholder="you@example.com" />
+            <label asp-for="Input.Email" class="form-label" for="reg-email">Email</label>
+            <input asp-for="Input.Email" class="form-control" type="email" placeholder="you@example.com" id="reg-email" />
             <span asp-validation-for="Input.Email" class="text-danger"></span>
         </div>
 
         <div class="mb-2">
-            <label asp-for="Input.Password" class="form-label">Password</label>
+            <label asp-for="Input.Password" class="form-label" for="password-input">Password</label>
             <input asp-for="Input.Password" class="form-control" type="password" id="password-input" autocomplete="new-password" />
             <span asp-validation-for="Input.Password" class="text-danger"></span>
             <div class="pw-meter"><div id="pw-bar" class="pw-meter-bar"></div></div>
@@ -73,20 +73,20 @@
             </div>
         </div>
         <div class="mb-2">
-            <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
-            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" />
+            <label asp-for="Input.ConfirmPassword" class="form-label" for="reg-confirm">Confirm Password</label>
+            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" id="reg-confirm" />
             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
         </div>
 
         <div class="mb-2">
-            <label asp-for="Input.Resume" class="form-label">Resume</label>
-            <input asp-for="Input.Resume" class="form-control" type="file" accept=".docx,.pdf" />
+            <label asp-for="Input.Resume" class="form-label" for="reg-resume">Resume</label>
+            <input asp-for="Input.Resume" class="form-control" type="file" accept=".docx,.pdf" id="reg-resume" />
             <span asp-validation-for="Input.Resume" class="text-danger"></span>
             <div class="form-text">.docx or .pdf, max 10 MB</div>
         </div>
         <div class="mb-3">
-            <label asp-for="Input.WhoAmI" class="form-label">Who Am I</label>
-            <textarea asp-for="Input.WhoAmI" class="form-control" rows="2" placeholder="Tell us about yourself&hellip;"></textarea>
+            <label asp-for="Input.WhoAmI" class="form-label" for="reg-whoami">Who Am I</label>
+            <textarea asp-for="Input.WhoAmI" class="form-control" rows="2" placeholder="Tell us about yourself&hellip;" id="reg-whoami"></textarea>
             <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
         </div>
 
