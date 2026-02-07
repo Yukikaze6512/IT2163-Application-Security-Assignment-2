@@ -2,102 +2,70 @@
 @model ApplicationSecurity.Pages.LoginModel
 @inject IConfiguration Configuration
 @{
+    Layout = "_AuthLayout";
     ViewData["Title"] = "Login";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-5 col-md-7">
-        <div class="text-center mb-4">
-            <i class="bi bi-briefcase-fill display-4" style="color: var(--ace-primary);"></i>
-            <h2 class="mt-2 fw-bold" style="color: var(--ace-primary);">Welcome back</h2>
-            <p class="text-muted">Sign in to your Ace Job Agency account</p>
-        </div>
+<div class="auth-form-box">
+    <h1 class="page-title mb-1">Sign in</h1>
+    <p class="page-desc mb-4">Enter your credentials to continue.</p>
 
-        <div class="card shadow">
-            <div class="card-body p-4">
-                @if (!string.IsNullOrEmpty(Model.Message))
-                {
-                    <div class="alert alert-info d-flex align-items-center" role="alert">
-                        <i class="bi bi-info-circle-fill me-2 flex-shrink-0"></i>
-                        <div>@Model.Message</div>
-                    </div>
-                }
-
-                <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none;"></div>
-
-                <form method="post" id="loginForm">
-                    <div class="mb-3">
-                        <label asp-for="Input.Email" class="form-label">
-                            <i class="bi bi-envelope me-1 text-muted"></i>Email Address
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-at"></i></span>
-                            <input asp-for="Input.Email" class="form-control" type="email" autofocus
-                                   placeholder="you@example.com" />
-                        </div>
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <label asp-for="Input.Password" class="form-label">
-                                <i class="bi bi-lock me-1 text-muted"></i>Password
-                            </label>
-                            <a asp-page="/ForgotPassword" class="small text-decoration-none">Forgot password?</a>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-key"></i></span>
-                            <input asp-for="Input.Password" class="form-control" type="password" />
-                        </div>
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-
-                    <input type="hidden" id="RecaptchaToken" name="Input.RecaptchaToken" />
-
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-ace btn-lg" data-no-spinner="true">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
-                        </button>
-                    </div>
-
-                    <p class="divider-text my-4">or</p>
-
-                    <div class="text-center">
-                        New here?
-                        <a asp-page="/Register" class="fw-semibold text-decoration-none">Create an account</a>
-                    </div>
-                </form>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info mb-3">
+            <i data-lucide="info" class="alert-icon"></i>
+            <div>
+                <div class="alert-title">Notice</div>
+                <div class="alert-desc">@Model.Message</div>
             </div>
         </div>
-    </div>
+    }
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-3">
+            <i data-lucide="circle-alert" class="alert-icon"></i>
+            <div>
+                <div class="alert-title">Authentication failed</div>
+                <div asp-validation-summary="All"></div>
+            </div>
+        </div>
+    }
+
+    <form method="post" id="loginForm">
+        <div class="mb-3">
+            <label asp-for="Input.Email" class="form-label">Email</label>
+            <input asp-for="Input.Email" class="form-control" type="email" autofocus placeholder="you@example.com" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-baseline">
+                <label asp-for="Input.Password" class="form-label">Password</label>
+                <a asp-page="/ForgotPassword" class="text-xs text-muted text-decoration-none">Forgot password?</a>
+            </div>
+            <input asp-for="Input.Password" class="form-control" type="password" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <input type="hidden" id="RecaptchaToken" name="Input.RecaptchaToken" />
+        <button type="submit" class="btn btn-p w-100 mt-1" data-no-spinner="true">Sign in</button>
+        <p class="divider">or</p>
+        <p class="text-center text-xs text-muted">
+            Don&rsquo;t have an account? <a asp-page="/Register" class="link">Register</a>
+        </p>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://www.google.com/recaptcha/api.js?render=@Configuration["GoogleReCaptcha:SiteKey"]"></script>
     <script>
-        var vs = document.querySelector('[data-valmsg-summary]');
-        if (vs) {
-            var observer = new MutationObserver(function () {
-                vs.style.display = vs.querySelector('li') ? 'block' : 'none';
-            });
-            observer.observe(vs, { childList: true, subtree: true });
-        }
-
-        var isSubmitting = false;
+        var submitting = false;
         document.getElementById('loginForm').addEventListener('submit', function (e) {
-            if (isSubmitting) return true;
-            e.preventDefault();
-            var form = this;
-            var btn = form.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in\u2026';
-
+            if (submitting) return;
+            e.preventDefault(); var f = this, b = f.querySelector('button[type="submit"]');
+            b.disabled = true; b.textContent = 'Signing in\u2026';
             grecaptcha.ready(function () {
-                grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', { action: 'login' }).then(function (token) {
-                    document.getElementById('RecaptchaToken').value = token;
-                    isSubmitting = true;
-                    form.submit();
+                grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', {action:'login'}).then(function (t) {
+                    document.getElementById('RecaptchaToken').value = t; submitting = true; f.submit();
                 });
             });
         });

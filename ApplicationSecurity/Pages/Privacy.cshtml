@@ -2,29 +2,26 @@
 @model PrivacyModel
 @{
     ViewData["Title"] = "Privacy Policy";
+    ViewData["Breadcrumb"] = "Privacy Policy";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow">
-            <div class="card-header-custom">
-                <h3><i class="bi bi-shield-check me-2"></i>Privacy Policy</h3>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">Last updated: February 2026</p>
+<div class="max-w-lg">
+    <div class="mb-4">
+        <h1 class="page-title">Privacy Policy</h1>
+        <p class="page-desc">Last updated: February 2026</p>
+    </div>
 
-                <h5 class="fw-bold mt-4">1. Information We Collect</h5>
-                <p>We collect personal information that you provide during membership registration, including your name, email address, NRIC, date of birth, and resume. Sensitive data such as your NRIC is encrypted before storage.</p>
+    <div class="text-sm" style="color: var(--muted-fg); line-height: 1.7;">
+        <h6 class="fw-semibold mt-3 mb-1" style="color: var(--fg);">1. Information We Collect</h6>
+        <p>We collect personal information during registration including your name, email, NRIC, date of birth, and resume. Sensitive data such as NRIC is encrypted before storage.</p>
 
-                <h5 class="fw-bold mt-4">2. How We Use Your Information</h5>
-                <p>Your personal information is used to manage your membership account, provide our services, and ensure the security of your account through measures like two-factor authentication and activity logging.</p>
+        <h6 class="fw-semibold mt-3 mb-1" style="color: var(--fg);">2. How We Use Your Information</h6>
+        <p>Your information is used to manage your membership account and ensure account security through two-factor authentication and activity logging.</p>
 
-                <h5 class="fw-bold mt-4">3. Data Security</h5>
-                <p>We implement industry-standard security measures including encryption of sensitive data, secure password hashing, session management, and audit logging to protect your personal information.</p>
+        <h6 class="fw-semibold mt-3 mb-1" style="color: var(--fg);">3. Data Security</h6>
+        <p>We implement industry-standard security including encryption, secure password hashing, session management, and audit logging.</p>
 
-                <h5 class="fw-bold mt-4">4. Contact Us</h5>
-                <p>If you have questions about this privacy policy, please contact us at <a href="mailto:privacy@acejobagency.com" class="text-decoration-none">privacy@acejobagency.com</a>.</p>
-            </div>
-        </div>
+        <h6 class="fw-semibold mt-3 mb-1" style="color: var(--fg);">4. Contact</h6>
+        <p class="mb-0">Questions? Email <a href="mailto:privacy@acejobagency.com" class="link">privacy@acejobagency.com</a>.</p>
     </div>
 </div>

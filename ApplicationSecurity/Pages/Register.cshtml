@@ -2,197 +2,116 @@
 @model ApplicationSecurity.Pages.RegisterModel
 @inject IConfiguration Configuration
 @{
+    Layout = "_AuthLayout";
     ViewData["Title"] = "Register";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-7 col-md-9">
-        <div class="card shadow">
-            <div class="card-header-custom">
-                <h3><i class="bi bi-person-plus-fill me-2"></i>Membership Registration</h3>
-            </div>
-            <div class="card-body">
-                <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none;"></div>
+<div class="auth-form-box wide">
+    <h1 class="page-title mb-1">Create an account</h1>
+    <p class="page-desc mb-4">Join Ace Job Agency to get started.</p>
 
-                <form method="post" enctype="multipart/form-data" id="registerForm">
-
-                    @* ---- Name Row ---- *@
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="Input.FirstName" class="form-label">
-                                <i class="bi bi-person me-1 text-muted"></i>First Name
-                            </label>
-                            <input asp-for="Input.FirstName" class="form-control" maxlength="50" placeholder="John" />
-                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="Input.LastName" class="form-label">
-                                <i class="bi bi-person me-1 text-muted"></i>Last Name
-                            </label>
-                            <input asp-for="Input.LastName" class="form-control" maxlength="50" placeholder="Doe" />
-                            <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    @* ---- Gender & DOB ---- *@
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <label asp-for="Input.Gender" class="form-label">
-                                <i class="bi bi-gender-ambiguous me-1 text-muted"></i>Gender
-                            </label>
-                            <select asp-for="Input.Gender" class="form-select">
-                                <option value="">Select&hellip;</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                            <span asp-validation-for="Input.Gender" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6">
-                            <label asp-for="Input.DateOfBirth" class="form-label">
-                                <i class="bi bi-calendar3 me-1 text-muted"></i>Date of Birth
-                            </label>
-                            <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
-                            <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    @* ---- NRIC ---- *@
-                    <div class="mb-3">
-                        <label asp-for="Input.NRIC" class="form-label">
-                            <i class="bi bi-credit-card-2-front me-1 text-muted"></i>NRIC
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-hash"></i></span>
-                            <input asp-for="Input.NRIC" class="form-control" placeholder="S1234567A" maxlength="9" />
-                        </div>
-                        <span asp-validation-for="Input.NRIC" class="text-danger"></span>
-                        <div class="form-text">Format: Letter + 7 digits + Letter (e.g. S1234567A)</div>
-                    </div>
-
-                    @* ---- Email ---- *@
-                    <div class="mb-3">
-                        <label asp-for="Input.Email" class="form-label">
-                            <i class="bi bi-envelope me-1 text-muted"></i>Email Address
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-at"></i></span>
-                            <input asp-for="Input.Email" class="form-control" type="email" placeholder="you@example.com" />
-                        </div>
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-
-                    <hr class="my-4" />
-
-                    @* ---- Password ---- *@
-                    <div class="mb-3">
-                        <label asp-for="Input.Password" class="form-label">
-                            <i class="bi bi-lock me-1 text-muted"></i>Password
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
-                            <input asp-for="Input.Password" class="form-control" type="password"
-                                   id="password-input" autocomplete="new-password" />
-                        </div>
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        <div class="password-meter">
-                            <div id="password-strength-bar" class="password-meter-bar"></div>
-                        </div>
-                        <small id="password-strength-text" class="fw-semibold"></small>
-                        <div class="password-requirements mt-1">
-                            <span class="req" id="req-length"><i class="bi bi-circle"></i>12+ chars</span>
-                            <span class="req" id="req-lower"><i class="bi bi-circle"></i>Lowercase</span>
-                            <span class="req" id="req-upper"><i class="bi bi-circle"></i>Uppercase</span>
-                            <span class="req" id="req-digit"><i class="bi bi-circle"></i>Number</span>
-                            <span class="req" id="req-special"><i class="bi bi-circle"></i>Special char</span>
-                        </div>
-                    </div>
-
-                    @* ---- Confirm Password ---- *@
-                    <div class="mb-3">
-                        <label asp-for="Input.ConfirmPassword" class="form-label">
-                            <i class="bi bi-lock-fill me-1 text-muted"></i>Confirm Password
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
-                            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" />
-                        </div>
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                    </div>
-
-                    <hr class="my-4" />
-
-                    @* ---- Resume ---- *@
-                    <div class="mb-3">
-                        <label asp-for="Input.Resume" class="form-label">
-                            <i class="bi bi-file-earmark-arrow-up me-1 text-muted"></i>Resume
-                        </label>
-                        <input asp-for="Input.Resume" class="form-control" type="file" accept=".docx,.pdf" />
-                        <span asp-validation-for="Input.Resume" class="text-danger"></span>
-                        <div class="form-text"><i class="bi bi-info-circle me-1"></i>Accepted: .docx, .pdf (max 10 MB)</div>
-                    </div>
-
-                    @* ---- Who Am I ---- *@
-                    <div class="mb-4">
-                        <label asp-for="Input.WhoAmI" class="form-label">
-                            <i class="bi bi-chat-quote me-1 text-muted"></i>Who Am I
-                        </label>
-                        <textarea asp-for="Input.WhoAmI" class="form-control" rows="3"
-                                  placeholder="Tell us about yourself&hellip;"></textarea>
-                        <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
-                        <div class="form-text">Special characters are allowed.</div>
-                    </div>
-
-                    <input type="hidden" id="RecaptchaToken" name="Input.RecaptchaToken" />
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-ace btn-lg" data-no-spinner="true">
-                            <i class="bi bi-check-circle me-1"></i>Create Account
-                        </button>
-                    </div>
-
-                    <p class="divider-text my-4">or</p>
-
-                    <div class="text-center">
-                        Already a member?
-                        <a asp-page="/Login" class="fw-semibold text-decoration-none">Sign in</a>
-                    </div>
-                </form>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger mb-3">
+            <i data-lucide="circle-alert" class="alert-icon"></i>
+            <div>
+                <div class="alert-title">Registration failed</div>
+                <div asp-validation-summary="All"></div>
             </div>
         </div>
-    </div>
+    }
+
+    <form method="post" enctype="multipart/form-data" id="registerForm">
+        <div class="row g-2 mb-2">
+            <div class="col-6">
+                <label asp-for="Input.FirstName" class="form-label">First Name</label>
+                <input asp-for="Input.FirstName" class="form-control" maxlength="50" placeholder="John" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="Input.LastName" class="form-label">Last Name</label>
+                <input asp-for="Input.LastName" class="form-control" maxlength="50" placeholder="Doe" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-6">
+                <label asp-for="Input.Gender" class="form-label">Gender</label>
+                <select asp-for="Input.Gender" class="form-select"><option value="">Select&hellip;</option><option value="Male">Male</option><option value="Female">Female</option></select>
+                <span asp-validation-for="Input.Gender" class="text-danger"></span>
+            </div>
+            <div class="col-6">
+                <label asp-for="Input.DateOfBirth" class="form-label">Date of Birth</label>
+                <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
+                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-2">
+            <label asp-for="Input.NRIC" class="form-label">NRIC</label>
+            <input asp-for="Input.NRIC" class="form-control" placeholder="S1234567A" maxlength="9" />
+            <span asp-validation-for="Input.NRIC" class="text-danger"></span>
+            <div class="form-text">Letter + 7 digits + Letter</div>
+        </div>
+        <div class="mb-2">
+            <label asp-for="Input.Email" class="form-label">Email</label>
+            <input asp-for="Input.Email" class="form-control" type="email" placeholder="you@example.com" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Input.Password" class="form-label">Password</label>
+            <input asp-for="Input.Password" class="form-control" type="password" id="password-input" autocomplete="new-password" />
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <div class="pw-meter"><div id="pw-bar" class="pw-meter-bar"></div></div>
+            <small id="pw-text" class="fw-medium"></small>
+            <div class="pw-reqs">
+                <span class="pw-req" id="req-length">12+ chars</span>
+                <span class="pw-req" id="req-lower">Lowercase</span>
+                <span class="pw-req" id="req-upper">Uppercase</span>
+                <span class="pw-req" id="req-digit">Number</span>
+                <span class="pw-req" id="req-special">Special</span>
+            </div>
+        </div>
+        <div class="mb-2">
+            <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
+            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Input.Resume" class="form-label">Resume</label>
+            <input asp-for="Input.Resume" class="form-control" type="file" accept=".docx,.pdf" />
+            <span asp-validation-for="Input.Resume" class="text-danger"></span>
+            <div class="form-text">.docx or .pdf, max 10 MB</div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Input.WhoAmI" class="form-label">Who Am I</label>
+            <textarea asp-for="Input.WhoAmI" class="form-control" rows="2" placeholder="Tell us about yourself&hellip;"></textarea>
+            <span asp-validation-for="Input.WhoAmI" class="text-danger"></span>
+        </div>
+
+        <input type="hidden" id="RecaptchaToken" name="Input.RecaptchaToken" />
+        <button type="submit" class="btn btn-p w-100" data-no-spinner="true">Create account</button>
+        <p class="divider">or</p>
+        <p class="text-center text-xs text-muted">
+            Already have an account? <a asp-page="/Login" class="link">Sign in</a>
+        </p>
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://www.google.com/recaptcha/api.js?render=@Configuration["GoogleReCaptcha:SiteKey"]"></script>
     <script>
-        // Show validation summary if it has content
-        var vs = document.querySelector('[data-valmsg-summary]');
-        if (vs) {
-            var observer = new MutationObserver(function () {
-                vs.style.display = vs.querySelector('li') ? 'block' : 'none';
-            });
-            observer.observe(vs, { childList: true, subtree: true });
-        }
-
-        // Password strength
-        initPasswordStrengthIndicator('password-input', 'password-strength-bar', 'password-strength-text');
-
-        // reCAPTCHA v3
-        var isSubmitting = false;
+        initPwStrength('password-input', 'pw-bar', 'pw-text');
+        var submitting = false;
         document.getElementById('registerForm').addEventListener('submit', function (e) {
-            if (isSubmitting) return true;
-            e.preventDefault();
-            var form = this;
-            var btn = form.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account\u2026';
-
+            if (submitting) return;
+            e.preventDefault(); var f = this, b = f.querySelector('button[type="submit"]');
+            b.disabled = true; b.textContent = 'Creating account\u2026';
             grecaptcha.ready(function () {
-                grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', { action: 'register' }).then(function (token) {
-                    document.getElementById('RecaptchaToken').value = token;
-                    isSubmitting = true;
-                    form.submit();
+                grecaptcha.execute('@Configuration["GoogleReCaptcha:SiteKey"]', {action:'register'}).then(function (t) {
+                    document.getElementById('RecaptchaToken').value = t; submitting = true; f.submit();
                 });
             });
         });

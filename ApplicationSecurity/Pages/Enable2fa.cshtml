@@ -2,137 +2,102 @@
 @model ApplicationSecurity.Pages.Enable2faModel
 @{
     ViewData["Title"] = "Two-Factor Authentication";
+    ViewData["Breadcrumb"] = "Two-Factor Authentication";
 }
 
-<div class="row justify-content-center">
-    <div class="col-lg-6 col-md-8">
-        <div class="card shadow">
-            <div class="card-header-custom">
-                <h3><i class="bi bi-shield-lock-fill me-2"></i>Two-Factor Authentication</h3>
-            </div>
-            <div class="card-body">
-                @if (!string.IsNullOrEmpty(Model.StatusMessage))
-                {
-                    <div class="alert alert-success d-flex align-items-center">
-                        <i class="bi bi-check-circle-fill me-2 flex-shrink-0"></i>
-                        <div>@Model.StatusMessage</div>
-                    </div>
-                }
+<div class="max-w-md">
+    <div class="mb-4">
+        <h1 class="page-title">Two-factor authentication</h1>
+        <p class="page-desc">Add an extra layer of security to your account.</p>
+    </div>
 
-                @if (Model.Is2faEnabled)
-                {
-                    <div class="text-center py-3">
-                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3"
-                             style="width:4.5rem; height:4.5rem; background-color:#d1e7dd;">
-                            <i class="bi bi-shield-fill-check fs-1 text-success"></i>
-                        </div>
-                        <h4 class="fw-bold text-success">2FA is Enabled</h4>
-                        <p class="text-muted mb-4">
-                            Your account is protected with two-factor authentication.
-                        </p>
-                        <form method="post" asp-page-handler="Disable">
-                            <button type="submit" class="btn btn-outline-danger rounded-pill px-4"
-                                    onclick="return confirm('Are you sure you want to disable 2FA? This will reduce your account security.');">
-                                <i class="bi bi-shield-x me-1"></i>Disable 2FA
-                            </button>
-                        </form>
-                    </div>
-                }
-                else
-                {
-                    @* ---- Step 1: Scan QR ---- *@
-                    <div class="d-flex align-items-start mb-3">
-                        <span class="badge bg-primary rounded-circle me-3 p-2 mt-1" style="width:2rem; height:2rem; line-height:1;">1</span>
-                        <div>
-                            <h6 class="fw-bold mb-1">Scan QR Code</h6>
-                            <p class="text-muted small mb-0">
-                                Use an authenticator app like <strong>Google Authenticator</strong> or
-                                <strong>Microsoft Authenticator</strong>.
-                            </p>
-                        </div>
-                    </div>
-
-                    @if (Model.QrCodeImage != null)
-                    {
-                        <div class="text-center mb-3">
-                            <div class="d-inline-block p-3 bg-white border rounded-3 shadow-sm">
-                                <img src="data:image/png;base64,@Convert.ToBase64String(Model.QrCodeImage)"
-                                     alt="QR Code for 2FA" style="max-width:200px;" />
-                            </div>
-                        </div>
-                    }
-
-                    <div class="alert alert-light border text-center mb-4">
-                        <small class="text-muted d-block mb-1">Or enter this key manually:</small>
-                        <code class="fs-6 user-select-all">@Model.SharedKey</code>
-                    </div>
-
-                    @* ---- Step 2: Verify ---- *@
-                    <div class="d-flex align-items-start mb-3">
-                        <span class="badge bg-primary rounded-circle me-3 p-2 mt-1" style="width:2rem; height:2rem; line-height:1;">2</span>
-                        <div>
-                            <h6 class="fw-bold mb-1">Enter Verification Code</h6>
-                            <p class="text-muted small mb-0">
-                                Type the 6-digit code shown in your authenticator app.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none;"></div>
-
-                    <form method="post" asp-page-handler="Enable" id="enable2faForm">
-                        @* Hidden field collects the full OTP value *@
-                        <input type="hidden" name="Input.Code" id="enableOtpHidden" />
-
-                        <div class="mb-4">
-                            <div class="form-otp" id="enableOtp" role="group" aria-label="One-time password">
-                                <input class="form-otp-control" type="text">
-                                <input class="form-otp-control" type="text">
-                                <input class="form-otp-control" type="text">
-                                <div class="form-otp-separator">&ndash;</div>
-                                <input class="form-otp-control" type="text">
-                                <input class="form-otp-control" type="text">
-                                <input class="form-otp-control" type="text">
-                            </div>
-                            <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-2"></span>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-ace btn-lg" id="enableBtn">
-                                <i class="bi bi-shield-fill-check me-1"></i>Verify & Enable 2FA
-                            </button>
-                        </div>
-                    </form>
-                }
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert alert-success mb-3">
+            <i data-lucide="circle-check" class="alert-icon"></i>
+            <div>
+                <div class="alert-title">Success</div>
+                <div class="alert-desc">@Model.StatusMessage</div>
             </div>
         </div>
-    </div>
+    }
+
+    @if (Model.Is2faEnabled)
+    {
+        <div class="data-card">
+            <div class="card-inner text-center py-4">
+                <span class="badge bg-success rounded-pill px-3 py-2 mb-2 text-xs">Enabled</span>
+                <p class="text-muted text-sm mb-3">Your account is protected with two-factor authentication.</p>
+                <form method="post" asp-page-handler="Disable">
+                    <button type="submit" class="btn btn-o btn-sm"
+                            onclick="return confirm('Disable two-factor authentication?');">Disable 2FA</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="data-card mb-3">
+            <div class="card-head">Step 1 &mdash; Scan QR code</div>
+            <div class="card-inner">
+                <p class="text-sm text-muted mb-3">Use Google Authenticator, Microsoft Authenticator, or a similar app.</p>
+                @if (Model.QrCodeImage != null)
+                {
+                    <div class="text-center mb-3">
+                        <div class="d-inline-block p-2 border rounded bg-white">
+                            <img src="data:image/png;base64,@Convert.ToBase64String(Model.QrCodeImage)" alt="QR Code" style="max-width:170px;" />
+                        </div>
+                    </div>
+                }
+                <div class="bg-light border rounded p-2 text-center text-sm">
+                    <span class="text-muted">Manual key:</span>
+                    <code class="user-select-all ms-1">@Model.SharedKey</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-head">Step 2 &mdash; Verify code</div>
+            <div class="card-inner">
+                <p class="text-sm text-muted mb-3">Enter the 6-digit code from your app.</p>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger mb-3">
+                        <i data-lucide="circle-alert" class="alert-icon"></i>
+                        <div>
+                            <div class="alert-title">Verification failed</div>
+                            <div asp-validation-summary="All"></div>
+                        </div>
+                    </div>
+                }
+                <form method="post" asp-page-handler="Enable" id="enable2faForm">
+                    <input type="hidden" name="Input.Code" id="enableOtpHidden" />
+                    <div class="mb-3">
+                        <div class="form-otp" id="enableOtp" role="group" aria-label="Verification code">
+                            <input class="otp-c" type="text">
+                            <input class="otp-c" type="text">
+                            <input class="otp-c" type="text">
+                            <span class="otp-sep">&ndash;</span>
+                            <input class="otp-c" type="text">
+                            <input class="otp-c" type="text">
+                            <input class="otp-c" type="text">
+                        </div>
+                        <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-1"></span>
+                    </div>
+                    <button type="submit" class="btn btn-p w-100" id="enableBtn">Enable 2FA</button>
+                </form>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        var vs = document.querySelector('[data-valmsg-summary]');
-        if (vs) { var o = new MutationObserver(function () { vs.style.display = vs.querySelector('li') ? 'block' : 'none'; }); o.observe(vs, { childList: true, subtree: true }); }
-
         if (document.getElementById('enableOtp')) {
-            initOtpInput('#enableOtp', 'Input.Code', {
-                length: 6,
-                type: 'number',
-                placeholder: '0',
-                autoSubmit: false,
-                onComplete: function (val) {
-                    var btn = document.getElementById('enableBtn');
-                    btn.classList.add('btn-success');
-                    btn.classList.remove('btn-ace');
-                    btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Code entered — Enable now';
-                }
-            });
-
+            initOtp('#enableOtp', 'Input.Code', { type:'number', placeholder:'0' });
             document.getElementById('enable2faForm').addEventListener('submit', function () {
-                var btn = document.getElementById('enableBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying\u2026';
+                var b = document.getElementById('enableBtn'); b.disabled = true; b.textContent = 'Verifying\u2026';
             });
         }
     </script>

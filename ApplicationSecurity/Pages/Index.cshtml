@@ -4,108 +4,61 @@
     ViewData["Title"] = "Home";
 }
 
-@* ---- Welcome Banner ---- *@
-<div class="card shadow mb-4" style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5986 100%);">
-    <div class="card-body text-white py-4 px-4">
-        <div class="d-flex align-items-center">
-            <div class="rounded-circle bg-white bg-opacity-25 d-flex align-items-center justify-content-center me-3"
-                 style="width:3.5rem; height:3.5rem;">
-                <i class="bi bi-person-fill fs-3 text-white"></i>
-            </div>
-            <div>
-                <h3 class="mb-0 fw-bold">Welcome, @Model.FirstName @Model.LastName</h3>
-                <small class="text-white-50">Your profile information is shown below</small>
-            </div>
-        </div>
+<div class="max-w-lg">
+    <div class="mb-4">
+        <h1 class="page-title">Welcome, @Model.FirstName @Model.LastName</h1>
+        <p class="page-desc">Your membership profile information.</p>
     </div>
-</div>
 
-@* ---- Profile Card ---- *@
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-4">
-                    <i class="bi bi-person-badge me-2" style="color:var(--ace-primary);"></i>Profile Details
-                </h5>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-person"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">First Name</div>
-                        <div class="profile-field-value">@Model.FirstName</div>
+    <div class="data-card">
+        <div class="card-head">Profile</div>
+        <div class="card-inner">
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="user"></i></div>
+                <div><div class="pf-label">First Name</div><div class="pf-value">@Model.FirstName</div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="user"></i></div>
+                <div><div class="pf-label">Last Name</div><div class="pf-value">@Model.LastName</div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="users"></i></div>
+                <div><div class="pf-label">Gender</div><div class="pf-value">@Model.Gender</div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="credit-card"></i></div>
+                <div><div class="pf-label">NRIC</div><div class="pf-value"><code class="text-sm">@Model.NRIC</code></div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="mail"></i></div>
+                <div><div class="pf-label">Email</div><div class="pf-value">@Model.Email</div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="calendar"></i></div>
+                <div><div class="pf-label">Date of Birth</div><div class="pf-value">@Model.DateOfBirth.ToString("dd MMMM yyyy")</div></div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="file-text"></i></div>
+                <div>
+                    <div class="pf-label">Resume</div>
+                    <div class="pf-value">
+                        @if (!string.IsNullOrEmpty(Model.ResumeFileName))
+                        {
+                            <a asp-page="/Index" asp-page-handler="DownloadResume" class="btn btn-o btn-sm">
+                                <i data-lucide="download" style="width:12px;height:12px;display:inline;vertical-align:-2px;"></i>
+                                @Model.ResumeFileName
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">None</span>
+                        }
                     </div>
                 </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-person-fill"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Last Name</div>
-                        <div class="profile-field-value">@Model.LastName</div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-gender-ambiguous"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Gender</div>
-                        <div class="profile-field-value">@Model.Gender</div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-credit-card-2-front"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">NRIC</div>
-                        <div class="profile-field-value">
-                            <code class="bg-light px-2 py-1 rounded">@Model.NRIC</code>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-envelope"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Email</div>
-                        <div class="profile-field-value">@Model.Email</div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-calendar3"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Date of Birth</div>
-                        <div class="profile-field-value">@Model.DateOfBirth.ToString("dd MMMM yyyy")</div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-file-earmark-text"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Resume</div>
-                        <div class="profile-field-value">
-                            @if (!string.IsNullOrEmpty(Model.ResumeFileName))
-                            {
-                                <a asp-page="/Index" asp-page-handler="DownloadResume"
-                                   class="btn btn-sm btn-ace-outline rounded-pill">
-                                    <i class="bi bi-download me-1"></i>@Model.ResumeFileName
-                                </a>
-                            }
-                            else
-                            {
-                                <span class="text-muted fst-italic">No resume uploaded</span>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-field">
-                    <div class="profile-field-icon"><i class="bi bi-chat-quote"></i></div>
-                    <div class="profile-field-content">
-                        <div class="profile-field-label">Who Am I</div>
-                        <div class="profile-field-value">@Model.WhoAmI</div>
-                    </div>
-                </div>
+            </div>
+            <div class="pf">
+                <div class="pf-icon"><i data-lucide="message-circle"></i></div>
+                <div><div class="pf-label">Who Am I</div><div class="pf-value">@Model.WhoAmI</div></div>
             </div>
         </div>
     </div>

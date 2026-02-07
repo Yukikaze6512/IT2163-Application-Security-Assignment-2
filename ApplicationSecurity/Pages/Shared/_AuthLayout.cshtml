@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ace Job Agency</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="auth-grid">
+        <div class="auth-form-col">
+            <a href="/" class="auth-brand">
+                <span class="brand-icon"><i data-lucide="briefcase" style="width:14px;height:14px;"></i></span>
+                Ace Job Agency
+            </a>
+            <div class="auth-form-center">
+                @RenderBody()
+            </div>
+            <div class="auth-form-footer">&copy; 2026 Ace Job Agency</div>
+        </div>
+        <div class="auth-panel">
+            <img src="~/images/auth-hero.jpg" alt="Job interview" />
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

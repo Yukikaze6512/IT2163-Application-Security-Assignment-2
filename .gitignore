@@ -67,6 +67,9 @@ $RECYCLE.BIN/
 # Uploads (user-uploaded resumes)
 ApplicationSecurity/Uploads/
 
+# appsettings.Development.json
+ApplicationSecurity/appsettings.Development.json
+
 # Data Protection keys (machine-specific encryption keys)
 ApplicationSecurity/DataProtection-Keys/
 
