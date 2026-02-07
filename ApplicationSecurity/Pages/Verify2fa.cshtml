@@ -1,0 +1,76 @@
+@page
+@model ApplicationSecurity.Pages.Verify2faModel
+@{
+    ViewData["Title"] = "Two-Factor Verification";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+        <div class="text-center mb-4">
+            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3"
+                 style="width:4.5rem; height:4.5rem; background-color:#e8f0fe;">
+                <i class="bi bi-shield-lock fs-1" style="color:var(--ace-primary);"></i>
+            </div>
+            <h3 class="fw-bold" style="color:var(--ace-primary);">Two-Factor Verification</h3>
+            <p class="text-muted">Open your authenticator app and enter the 6-digit code.</p>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none;"></div>
+
+                <form method="post" id="verify2faForm">
+                    @* Hidden field collects the full OTP value *@
+                    <input type="hidden" name="Input.Code" id="otpHidden" />
+
+                    <div class="mb-4">
+                        <label class="form-label text-center d-block mb-3">Verification Code</label>
+                        <div class="form-otp form-otp-lg" id="verifyOtp" role="group" aria-label="One-time password">
+                            <input class="form-otp-control" type="text">
+                            <input class="form-otp-control" type="text">
+                            <input class="form-otp-control" type="text">
+                            <div class="form-otp-separator">&ndash;</div>
+                            <input class="form-otp-control" type="text">
+                            <input class="form-otp-control" type="text">
+                            <input class="form-otp-control" type="text">
+                        </div>
+                        <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-2"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-ace btn-lg" id="verifyBtn">
+                            <i class="bi bi-check2-circle me-1"></i>Verify
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var vs = document.querySelector('[data-valmsg-summary]');
+        if (vs) { var o = new MutationObserver(function () { vs.style.display = vs.querySelector('li') ? 'block' : 'none'; }); o.observe(vs, { childList: true, subtree: true }); }
+
+        initOtpInput('#verifyOtp', 'Input.Code', {
+            length: 6,
+            type: 'number',
+            placeholder: '0',
+            autoSubmit: false,
+            onComplete: function (val) {
+                var btn = document.getElementById('verifyBtn');
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-ace');
+                btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Code entered — Verify now';
+            }
+        });
+
+        document.getElementById('verify2faForm').addEventListener('submit', function () {
+            var btn = document.getElementById('verifyBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying\u2026';
+        });
+    </script>
+}
