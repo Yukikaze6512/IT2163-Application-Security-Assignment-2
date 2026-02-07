@@ -190,7 +190,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const email = document.querySelector('[name="Input.Email"]');
     if (email) {
         email.addEventListener('blur', function () {
-            this.classList.toggle('is-invalid', !!(this.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)));
+            const v = this.value;
+            this.classList.toggle('is-invalid', !!(v && (v.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))));
         });
     }
 
