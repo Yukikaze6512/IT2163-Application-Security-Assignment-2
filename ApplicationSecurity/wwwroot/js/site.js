@@ -97,7 +97,7 @@ function initOtp(sel, hiddenName, opts) {
         el.addEventListener('input', function () {
             let v = this.value;
             if (opts.type === 'number') {
-                v = v.replace(/\D/g, '');
+                v = v.replaceAll(/\D/g, '');
             }
             this.value = v.charAt(0) || '';
             markOtpInput(this);
@@ -146,9 +146,9 @@ function initOtp(sel, hiddenName, opts) {
         });
         el.addEventListener('paste', function (e) {
             e.preventDefault();
-            let p = (e.clipboardData || window.clipboardData).getData('text').trim();
+            let p = (e.clipboardData || globalThis.clipboardData).getData('text').trim();
             if (opts.type === 'number') {
-                p = p.replace(/\D/g, '');
+                p = p.replaceAll(/\D/g, '');
             }
             for (let j = 0; j < ins.length; j++) {
                 ins[j].value = p.charAt(j) || '';
