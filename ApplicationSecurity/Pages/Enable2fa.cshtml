@@ -73,7 +73,7 @@
                 <form method="post" asp-page-handler="Enable" id="enable2faForm">
                     <input type="hidden" name="Input.Code" id="enableOtpHidden" />
                     <div class="mb-3">
-                        <div class="form-otp" id="enableOtp" role="group" aria-label="Verification code">
+                        <fieldset class="form-otp" id="enableOtp" aria-label="Verification code">
                             <input class="otp-c" type="text">
                             <input class="otp-c" type="text">
                             <input class="otp-c" type="text">
@@ -81,7 +81,7 @@
                             <input class="otp-c" type="text">
                             <input class="otp-c" type="text">
                             <input class="otp-c" type="text">
-                        </div>
+                        </fieldset>
                         <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-1"></span>
                     </div>
                     <button type="submit" class="btn btn-p w-100" id="enableBtn">Enable 2FA</button>
