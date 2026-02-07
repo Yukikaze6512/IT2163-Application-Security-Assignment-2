@@ -1,11 +1,11 @@
 // ===== Password Strength =====
 function initPwStrength(inputId, barId, textId) {
-    var input = document.getElementById(inputId);
-    var bar = document.getElementById(barId);
-    var text = document.getElementById(textId);
+    const input = document.getElementById(inputId);
+    const bar = document.getElementById(barId);
+    const text = document.getElementById(textId);
     if (!input || !bar) return;
 
-    var reqs = {
+    const reqs = {
         length: document.getElementById('req-length'),
         lower: document.getElementById('req-lower'),
         upper: document.getElementById('req-upper'),
@@ -14,23 +14,24 @@ function initPwStrength(inputId, barId, textId) {
     };
 
     input.addEventListener('input', function () {
-        var pw = this.value, s = 0;
-        var checks = {
+        const pw = this.value;
+        let s = 0;
+        const checks = {
             length: pw.length >= 12,
             lower: /[a-z]/.test(pw),
             upper: /[A-Z]/.test(pw),
             digit: /\d/.test(pw),
             special: /[\W_]/.test(pw)
         };
-        for (var k in checks) {
+        for (const k in checks) {
             if (checks[k]) s++;
             if (reqs[k]) reqs[k].classList.toggle('met', checks[k]);
         }
-        var pct = (s / 5) * 100;
+        const pct = (s / 5) * 100;
         bar.style.width = pct + '%';
-        var colors = ['#ef4444', '#ef4444', '#f97316', '#eab308', '#16a34a'];
-        var labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
-        var i = Math.max(0, s - 1);
+        const colors = ['#ef4444', '#ef4444', '#f97316', '#eab308', '#16a34a'];
+        const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
+        const i = Math.max(0, s - 1);
         bar.style.backgroundColor = colors[i];
         if (text) { text.textContent = pw.length ? labels[i] : ''; text.style.color = colors[i]; }
     });
@@ -39,9 +40,10 @@ function initPwStrength(inputId, barId, textId) {
 // ===== OTP =====
 function initOtp(sel, hiddenName, opts) {
     opts = Object.assign({ type: 'number', placeholder: '', autoSubmit: false, onComplete: null }, opts || {});
-    var ct = document.querySelector(sel);
+    const ct = document.querySelector(sel);
     if (!ct) return;
-    var ins = ct.querySelectorAll('.otp-c'), hid = document.querySelector('input[name="' + hiddenName + '"]');
+    const ins = ct.querySelectorAll('.otp-c');
+    const hid = document.querySelector('input[name="' + hiddenName + '"]');
 
     if (opts.placeholder) ins.forEach(function (el, i) { el.placeholder = opts.placeholder.length === 1 ? opts.placeholder : (opts.placeholder[i] || ''); });
     ins.forEach(function (el, i) {
@@ -50,15 +52,16 @@ function initOtp(sel, hiddenName, opts) {
         if (opts.type === 'number') { el.inputMode = 'numeric'; el.pattern = '[0-9]*'; }
     });
 
-    function collect() { var v = ''; ins.forEach(function (el) { v += el.value; }); if (hid) hid.value = v; return v; }
+    function collect() { let v = ''; ins.forEach(function (el) { v += el.value; }); if (hid) hid.value = v; return v; }
     function mark(el) { el.classList.toggle('filled', !!el.value); if (el.value) { el.classList.add('pop'); setTimeout(function () { el.classList.remove('pop'); }, 120); } }
 
     ins.forEach(function (el, i) {
         el.addEventListener('input', function () {
-            var v = this.value; if (opts.type === 'number') v = v.replace(/\D/g, '');
-            this.value = v.charAt(0) || ''; mark(this); var full = collect();
+            let v = this.value; if (opts.type === 'number') v = v.replace(/\D/g, '');
+            this.value = v.charAt(0) || ''; mark(this);
+            const full = collect();
             if (this.value && i < ins.length - 1) { ins[i + 1].focus(); ins[i + 1].select(); }
-            if (full.length === ins.length) { if (opts.onComplete) opts.onComplete(full); if (opts.autoSubmit) { var f = ct.closest('form'); if (f) f.submit(); } }
+            if (full.length === ins.length) { if (opts.onComplete) opts.onComplete(full); if (opts.autoSubmit) { const f = ct.closest('form'); if (f) f.submit(); } }
         });
         el.addEventListener('keydown', function (e) {
             if (e.key === 'Backspace') { if (!this.value && i > 0) { ins[i - 1].focus(); ins[i - 1].value = ''; mark(ins[i - 1]); collect(); e.preventDefault(); } else { this.value = ''; mark(this); collect(); } }
@@ -67,11 +70,14 @@ function initOtp(sel, hiddenName, opts) {
         });
         el.addEventListener('focus', function () { this.select(); });
         el.addEventListener('paste', function (e) {
-            e.preventDefault(); var p = (e.clipboardData || window.clipboardData).getData('text').trim();
+            e.preventDefault();
+            let p = (e.clipboardData || window.clipboardData).getData('text').trim();
             if (opts.type === 'number') p = p.replace(/\D/g, '');
-            for (var j = 0; j < ins.length; j++) { ins[j].value = p.charAt(j) || ''; mark(ins[j]); }
-            collect(); var fi = Math.min(p.length, ins.length - 1); ins[fi].focus();
-            if (p.length >= ins.length) { if (opts.onComplete) opts.onComplete(collect()); if (opts.autoSubmit) { var f = ct.closest('form'); if (f) f.submit(); } }
+            for (let j = 0; j < ins.length; j++) { ins[j].value = p.charAt(j) || ''; mark(ins[j]); }
+            collect();
+            const fi = Math.min(p.length, ins.length - 1);
+            ins[fi].focus();
+            if (p.length >= ins.length) { if (opts.onComplete) opts.onComplete(collect()); if (opts.autoSubmit) { const f = ct.closest('form'); if (f) f.submit(); } }
         });
     });
     if (document.activeElement === document.body) ins[0].focus();
@@ -83,20 +89,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
     // NRIC uppercase
-    var nric = document.querySelector('[name="Input.NRIC"]');
+    const nric = document.querySelector('[name="Input.NRIC"]');
     if (nric) nric.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
 
     // Email blur check
-    var email = document.querySelector('[name="Input.Email"]');
+    const email = document.querySelector('[name="Input.Email"]');
     if (email) email.addEventListener('blur', function () {
         this.classList.toggle('is-invalid', !!(this.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)));
     });
 
     // Resume file check
-    var resume = document.querySelector('[name="Input.Resume"]');
+    const resume = document.querySelector('[name="Input.Resume"]');
     if (resume) resume.addEventListener('change', function () {
-        var f = this.files[0]; if (!f) return;
-        var ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
+        const f = this.files[0]; if (!f) return;
+        const ext = f.name.toLowerCase().substring(f.name.lastIndexOf('.'));
         if (!['.docx', '.pdf'].includes(ext)) { alert('Only .docx and .pdf files are allowed.'); this.value = ''; return; }
         if (f.size > 10485760) { alert('File size cannot exceed 10 MB.'); this.value = ''; }
     });
