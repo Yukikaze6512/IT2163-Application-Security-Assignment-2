@@ -5,7 +5,7 @@
     ViewData["Breadcrumb"] = "Two-Factor Authentication";
 }
 
-<div class="max-w-md">
+<div class="container-fluid px-0">
     <div class="mb-4">
         <h1 class="page-title">Two-factor authentication</h1>
         <p class="page-desc">Add an extra layer of security to your account.</p>
@@ -13,11 +13,13 @@
 
     @if (!string.IsNullOrEmpty(Model.StatusMessage))
     {
-        <div class="alert alert-success mb-3">
-            <i data-lucide="circle-check" class="alert-icon"></i>
-            <div>
-                <div class="alert-title">Success</div>
-                <div class="alert-desc">@Model.StatusMessage</div>
+        <div class="alert alert-success mb-4">
+            <div class="d-flex gap-2">
+                <i data-lucide="circle-check" class="alert-icon mt-1"></i>
+                <div>
+                    <div class="alert-title">Success</div>
+                    <div class="alert-desc">@Model.StatusMessage</div>
+                </div>
             </div>
         </div>
     }
@@ -25,67 +27,103 @@
     @if (Model.Is2faEnabled)
     {
         <div class="data-card">
-            <div class="card-inner text-center py-4">
-                <span class="badge bg-success rounded-pill px-3 py-2 mb-2 text-xs">Enabled</span>
-                <p class="text-muted text-sm mb-3">Your account is protected with two-factor authentication.</p>
+            <div class="card-inner text-center py-5">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle" style="width: 64px; height: 64px;">
+                        <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
+                    </div>
+                </div>
+                <h3 class="h5 fw-bold mb-2">2FA is Enabled</h3>
+                <p class="text-muted mb-4">Your account is currently protected with two-factor authentication.</p>
+                
                 <form method="post" asp-page-handler="Disable">
-                    <button type="submit" class="btn btn-o btn-sm"
-                            onclick="return confirm('Disable two-factor authentication?');">Disable 2FA</button>
+                    <button type="submit" class="btn btn-outline-danger"
+                            onclick="return confirm('Disable two-factor authentication?');">
+                        Disable 2FA
+                    </button>
                 </form>
             </div>
         </div>
     }
     else
     {
-        <div class="data-card mb-3">
-            <div class="card-head">Step 1 &mdash; Scan QR code</div>
-            <div class="card-inner">
-                <p class="text-sm text-muted mb-3">Use Google Authenticator, Microsoft Authenticator, or a similar app.</p>
-                @if (Model.QrCodeImage != null)
-                {
-                    <div class="text-center mb-3">
-                        <div class="d-inline-block p-2 border rounded bg-white">
-                            <img src="data:image/png;base64,@Convert.ToBase64String(Model.QrCodeImage)" alt="QR Code" style="max-width:170px;" />
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="data-card h-100">
+                    <div class="card-head">Step 1 &mdash; Scan QR code</div>
+                    <div class="card-inner">
+                        <p class="text-muted mb-4">Open your authenticator app (Google Authenticator, Microsoft Authenticator, etc.) and scan the code below.</p>
+                        
+                        <div class="d-flex flex-column align-items-center mb-4">
+                            @if (Model.QrCodeImage != null)
+                            {
+                                <div class="p-3 border rounded bg-white mb-3 shadow-sm">
+                                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.QrCodeImage)" alt="QR Code" style="width: 200px; height: 200px;" />
+                                </div>
+                            }
+                            
+                            <div class="text-center w-100" style="max-width: 300px;">
+                                <p class="text-xs text-muted text-uppercase fw-bold mb-2">Or enter code manually</p>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" 
+                                           class="form-control bg-light text-center font-monospace border-end-0 text-muted" 
+                                           value="@Model.SharedKey" 
+                                           id="sharedKey" 
+                                           readonly 
+                                           aria-label="Manual shared key"
+                                           onclick="this.select();">
+                                    <button class="btn btn-light border border-start-0" type="button" onclick="navigator.clipboard.writeText('@Model.SharedKey')">
+                                        <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                }
-                <div class="bg-light border rounded p-2 text-center text-sm">
-                    <span class="text-muted">Manual key:</span>
-                    <code class="user-select-all ms-1">@Model.SharedKey</code>
                 </div>
             </div>
-        </div>
 
-        <div class="data-card">
-            <div class="card-head">Step 2 &mdash; Verify code</div>
-            <div class="card-inner">
-                <p class="text-sm text-muted mb-3">Enter the 6-digit code from your app.</p>
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger mb-3">
-                        <i data-lucide="circle-alert" class="alert-icon"></i>
-                        <div>
-                            <div class="alert-title">Verification failed</div>
-                            <div asp-validation-summary="All"></div>
-                        </div>
+            <div class="col-lg-6">
+                <div class="data-card h-100">
+                    <div class="card-head">Step 2 &mdash; Verify code</div>
+                    <div class="card-inner">
+                        <p class="text-muted mb-4">Enter the 6-digit verification code generated by your app to confirm setup.</p>
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger mb-4">
+                                <div class="d-flex gap-2">
+                                    <i data-lucide="circle-alert" class="alert-icon mt-1"></i>
+                                    <div>
+                                        <div class="alert-title">Verification failed</div>
+                                        <div asp-validation-summary="All" class="mb-0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <form method="post" asp-page-handler="Enable" id="enable2faForm">
+                            <input type="hidden" name="Input.Code" id="enableOtpHidden" />
+                            
+                            <div class="mb-4">
+                                <label class="form-label d-block mb-3 text-center text-muted small text-uppercase fw-bold">Verification Code</label>
+                                <fieldset class="form-otp justify-content-center" id="enableOtp" aria-label="Verification code">
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                    <span class="otp-sep">&ndash;</span>
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                    <input class="otp-c" type="text" autocomplete="one-time-code" inputmode="numeric">
+                                </fieldset>
+                                <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-2 small"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-p w-100" id="enableBtn">
+                                Verify & Enable 2FA
+                            </button>
+                        </form>
                     </div>
-                }
-                <form method="post" asp-page-handler="Enable" id="enable2faForm">
-                    <input type="hidden" name="Input.Code" id="enableOtpHidden" />
-                    <div class="mb-3">
-                        <fieldset class="form-otp" id="enableOtp" aria-label="Verification code">
-                            <input class="otp-c" type="text">
-                            <input class="otp-c" type="text">
-                            <input class="otp-c" type="text">
-                            <span class="otp-sep">&ndash;</span>
-                            <input class="otp-c" type="text">
-                            <input class="otp-c" type="text">
-                            <input class="otp-c" type="text">
-                        </fieldset>
-                        <span asp-validation-for="Input.Code" class="text-danger d-block text-center mt-1"></span>
-                    </div>
-                    <button type="submit" class="btn btn-p w-100" id="enableBtn">Enable 2FA</button>
-                </form>
+                </div>
             </div>
         </div>
     }
@@ -96,8 +134,11 @@
     <script>
         if (document.getElementById('enableOtp')) {
             initOtp('#enableOtp', 'Input.Code', { type:'number', placeholder:'0' });
+            
             document.getElementById('enable2faForm').addEventListener('submit', function () {
-                var b = document.getElementById('enableBtn'); b.disabled = true; b.textContent = 'Verifying\u2026';
+                var b = document.getElementById('enableBtn'); 
+                b.disabled = true; 
+                b.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Verifying...';
             });
         }
     </script>

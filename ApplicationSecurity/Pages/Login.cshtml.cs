@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ApplicationSecurity.Data;
 using ApplicationSecurity.Models;
 using ApplicationSecurity.Services;
 
@@ -13,17 +14,23 @@ namespace ApplicationSecurity.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuditLogService _auditLogService;
         private readonly ReCaptchaService _reCaptchaService;
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public LoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             AuditLogService auditLogService,
-            ReCaptchaService reCaptchaService)
+            ReCaptchaService reCaptchaService,
+            ApplicationDbContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _auditLogService = auditLogService;
             _reCaptchaService = reCaptchaService;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [BindProperty]
@@ -52,7 +59,7 @@ namespace ApplicationSecurity.Pages
             {
                 "registered" => "Registration successful! Please log in.",
                 "session_expired" => "Your session has expired. Please log in again.",
-                "another_login" => "You have been logged out because another login was detected on a different device.",
+                "another_login" => "You have been logged out because another login was detected on a different device.", // This message might need update if allowing multi-login
                 "logged_out" => "You have been logged out successfully.",
                 "password_changed" => "Password changed successfully. Please log in with your new password.",
                 "password_reset" => "Password reset successfully. Please log in with your new password.",
@@ -97,10 +104,21 @@ namespace ApplicationSecurity.Pages
 
             if (result.Succeeded)
             {
-                // Set session ID for multi-device login detection
+                // Create new UserSession
                 var sessionId = Guid.NewGuid().ToString();
-                user.SessionId = sessionId;
-                await _userManager.UpdateAsync(user);
+                var userSession = new UserSession
+                {
+                    UserId = user.Id,
+                    SessionId = sessionId,
+                    IpAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(),
+                    UserAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString(),
+                    CreatedAt = DateTime.UtcNow,
+                    LastActiveAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _context.UserSessions.Add(userSession);
+                await _context.SaveChangesAsync();
+
                 HttpContext.Session.SetString("SessionId", sessionId);
 
                 await _auditLogService.LogAsync(user.Id, "Login", "User logged in successfully.");

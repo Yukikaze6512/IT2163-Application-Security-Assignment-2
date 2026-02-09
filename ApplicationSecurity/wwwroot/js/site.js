@@ -97,7 +97,7 @@ function initOtp(sel, hiddenName, opts) {
         el.addEventListener('input', function () {
             let v = this.value;
             if (opts.type === 'number') {
-                v = v.replaceAll(/\D/g, '');
+                v = v.replace(/\D/g, '');
             }
             this.value = v.charAt(0) || '';
             markOtpInput(this);
@@ -146,9 +146,9 @@ function initOtp(sel, hiddenName, opts) {
         });
         el.addEventListener('paste', function (e) {
             e.preventDefault();
-            let p = (e.clipboardData || globalThis.clipboardData).getData('text').trim();
+            let p = (e.clipboardData || window.clipboardData).getData('text').trim();
             if (opts.type === 'number') {
-                p = p.replaceAll(/\D/g, '');
+                p = p.replace(/\D/g, '');
             }
             for (let j = 0; j < ins.length; j++) {
                 ins[j].value = p.charAt(j) || '';
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (email) {
         email.addEventListener('blur', function () {
             const v = this.value;
-            this.classList.toggle('is-invalid', !!(v && (v.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))));
+            this.classList.toggle('is-invalid', !!(v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)));
         });
     }
 
@@ -214,4 +214,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Show validation summary only when it has visible error items
+    document.querySelectorAll('.val-summary').forEach(function (vs) {
+        function hasVisibleErrors() {
+            const items = vs.querySelectorAll('li');
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].style.display !== 'none' && items[i].textContent.trim()) return true;
+            }
+            return false;
+        }
+        function check() { vs.classList.toggle('has-errors', hasVisibleErrors()); }
+        check();
+        new MutationObserver(check).observe(vs, { childList: true, subtree: true, attributes: true, characterData: true });
+    });
 });

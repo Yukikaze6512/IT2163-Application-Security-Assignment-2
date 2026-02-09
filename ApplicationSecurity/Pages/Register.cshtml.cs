@@ -97,6 +97,7 @@ namespace ApplicationSecurity.Pages
 
         public void OnGet()
         {
+            Input.DateOfBirth = DateTime.Today;
         }
 
         public async Task<IActionResult> OnPostAsync()

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using ApplicationSecurity.Models;
 using ApplicationSecurity.Services;
+using ApplicationSecurity.Data;
 
 namespace ApplicationSecurity.Pages
 {
@@ -14,15 +16,18 @@ namespace ApplicationSecurity.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly EncryptionService _encryptionService;
         private readonly ILogger<IndexModel> _logger;
+        private readonly ApplicationDbContext _context;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             EncryptionService encryptionService,
-            ILogger<IndexModel> logger)
+            ILogger<IndexModel> logger,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _encryptionService = encryptionService;
             _logger = logger;
+            _context = context;
         }
 
         public string FirstName { get; set; } = string.Empty;
@@ -33,6 +38,10 @@ namespace ApplicationSecurity.Pages
         public DateTime DateOfBirth { get; set; }
         public string? ResumeFileName { get; set; }
         public string WhoAmI { get; set; } = string.Empty;
+
+        public List<UserSession> ActiveSessions { get; set; } = new();
+        public List<AuditLog> AuditLogs { get; set; } = new();
+        public string CurrentSessionId { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -59,6 +68,19 @@ namespace ApplicationSecurity.Pages
                 _logger.LogError(ex, "Failed to decrypt NRIC for user {UserId}", user.Id);
                 NRIC = "[Decryption Error]";
             }
+
+            // Fetch active sessions
+            CurrentSessionId = HttpContext.Session.GetString("SessionId") ?? string.Empty;
+            ActiveSessions = await _context.UserSessions
+                .Where(s => s.UserId == user.Id && s.IsActive)
+                .OrderByDescending(s => s.LastActiveAt)
+                .ToListAsync();
+
+            // Fetch all audit logs
+            AuditLogs = await _context.AuditLogs
+                .Where(l => l.UserId == user.Id)
+                .OrderByDescending(l => l.Timestamp)
+                .ToListAsync();
 
             return Page();
         }

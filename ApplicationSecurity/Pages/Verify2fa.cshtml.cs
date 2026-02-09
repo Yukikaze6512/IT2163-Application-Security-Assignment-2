@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ApplicationSecurity.Data;
 using ApplicationSecurity.Models;
 using ApplicationSecurity.Services;
 
@@ -12,15 +13,21 @@ namespace ApplicationSecurity.Pages
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AuditLogService _auditLogService;
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public Verify2faModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            AuditLogService auditLogService)
+            AuditLogService auditLogService,
+            ApplicationDbContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _auditLogService = auditLogService;
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [BindProperty]
@@ -58,10 +65,21 @@ namespace ApplicationSecurity.Pages
 
             if (result.Succeeded)
             {
-                // Set session ID for multi-device detection
+                // Create new UserSession
                 var sessionId = Guid.NewGuid().ToString();
-                user.SessionId = sessionId;
-                await _userManager.UpdateAsync(user);
+                var userSession = new UserSession
+                {
+                    UserId = user.Id,
+                    SessionId = sessionId,
+                    IpAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(),
+                    UserAgent = _httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString(),
+                    CreatedAt = DateTime.UtcNow,
+                    LastActiveAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _context.UserSessions.Add(userSession);
+                await _context.SaveChangesAsync();
+
                 HttpContext.Session.SetString("SessionId", sessionId);
 
                 await _auditLogService.LogAsync(user.Id, "Login", "User logged in with 2FA verification.");

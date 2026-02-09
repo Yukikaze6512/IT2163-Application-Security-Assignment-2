@@ -78,11 +78,13 @@ builder.Services.AddAntiforgery(options =>
 
 var app = builder.Build();
 
-// Apply pending migrations on startup
+// Apply pending migrations and clear session table on startup (in-memory sessions are lost on restart)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+    // Clear UserSessions so dashboard does not show stale "active" sessions after app restart
+    db.UserSessions.ExecuteDelete();
 }
 
 // Error handling
@@ -120,6 +122,8 @@ app.Use(async (context, next) =>
 
         var userManager = context.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
         var signInManager = context.RequestServices.GetRequiredService<SignInManager<ApplicationUser>>();
+        var dbContext = context.RequestServices.GetRequiredService<ApplicationDbContext>();
+        
         var user = await userManager.GetUserAsync(context.User);
 
         if (user == null)
@@ -129,7 +133,7 @@ app.Use(async (context, next) =>
             return;
         }
 
-        // Check session validity (detect multiple logins from different devices)
+        // Check session validity (Active UserSession)
         var sessionId = context.Session.GetString("SessionId");
         if (string.IsNullOrEmpty(sessionId))
         {
@@ -139,14 +143,22 @@ app.Use(async (context, next) =>
             return;
         }
 
-        if (!string.IsNullOrEmpty(user.SessionId) && sessionId != user.SessionId)
+        var userSession = await dbContext.UserSessions
+            .FirstOrDefaultAsync(s => s.SessionId == sessionId && s.UserId == user.Id && s.IsActive);
+
+        if (userSession == null)
         {
-            // Another device/browser logged in
+            // Session invalid or logged out elsewhere (if we forced logout)
+            // But here we allow multiple, so we just check if THIS session is active.
             await signInManager.SignOutAsync();
             context.Session.Clear();
-            context.Response.Redirect("/Login?message=another_login");
+            context.Response.Redirect("/Login?message=session_expired");
             return;
         }
+
+        // Update LastActiveAt
+        userSession.LastActiveAt = DateTime.UtcNow;
+        await dbContext.SaveChangesAsync();
 
         // Check maximum password age (must change every 90 days)
         if (path != "/changepassword")

@@ -13,6 +13,7 @@ namespace ApplicationSecurity.Data
 
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<PasswordHistory> PasswordHistories { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,6 +28,12 @@ namespace ApplicationSecurity.Data
             builder.Entity<PasswordHistory>(entity =>
             {
                 entity.HasIndex(e => e.UserId);
+            });
+
+            builder.Entity<UserSession>(entity =>
+            {
+                entity.HasIndex(e => e.UserId);
+                entity.HasIndex(e => e.SessionId);
             });
         }
     }
