@@ -41,13 +41,20 @@ namespace ApplicationSecurity.Services
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
 
-                _logger.LogInformation("Email sent successfully to {Email}", toEmail);
+                _logger.LogInformation("Email sent successfully to {Redacted}", RedactEmail(toEmail));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {Email}", toEmail);
+                _logger.LogError(ex, "Failed to send email to {Redacted}", RedactEmail(toEmail));
                 throw;
             }
+        }
+        private static string RedactEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email)) return "(none)";
+            var at = email.IndexOf('@');
+            if (at <= 0) return "***";
+            return "***@" + email[(at + 1)..];
         }
     }
 }
