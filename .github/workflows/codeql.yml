@@ -43,9 +43,13 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Restore .NET (C#)
+      if: matrix.language == 'csharp'
+      run: dotnet restore ApplicationSecurity/ApplicationSecurity.csproj
+
     - name: Build .NET (C#)
       if: matrix.language == 'csharp'
-      run: dotnet build ApplicationSecurity/ApplicationSecurity.csproj --no-restore 2>/dev/null || true
+      run: dotnet build ApplicationSecurity/ApplicationSecurity.csproj --no-restore -c Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
