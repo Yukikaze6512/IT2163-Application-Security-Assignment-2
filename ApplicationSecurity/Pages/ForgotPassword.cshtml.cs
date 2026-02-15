@@ -70,7 +70,6 @@ namespace ApplicationSecurity.Pages
                 }
                 catch (Exception)
                 {
-                    // Log but don't expose error to user
                 }
 
                 await _auditLogService.LogAsync(user.Id, "PasswordResetRequested",

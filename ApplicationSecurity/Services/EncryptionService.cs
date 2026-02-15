@@ -2,10 +2,6 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace ApplicationSecurity.Services
 {
-    /// <summary>
-    /// Provides encryption and decryption for sensitive data (e.g., NRIC)
-    /// using ASP.NET Core Data Protection API (AES-256-CBC under the hood).
-    /// </summary>
     public class EncryptionService
     {
         private readonly IDataProtector _protector;

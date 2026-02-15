@@ -21,14 +21,14 @@ builder.Services.AddDataProtection();
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Password settings - min 12 chars, upper, lower, digit, special char
+    // Password settings
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 12;
 
-    // Lockout settings - 3 failed attempts, lockout for 15 minutes
+    // Lockout settings
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.Lockout.MaxFailedAccessAttempts = 3;
     options.Lockout.AllowedForNewUsers = true;
@@ -148,8 +148,7 @@ app.Use(async (context, next) =>
 
         if (userSession == null)
         {
-            // Session invalid or logged out elsewhere (if we forced logout)
-            // But here we allow multiple, so we just check if THIS session is active.
+            // Session invalid or logged out elsewhere
             await signInManager.SignOutAsync();
             context.Session.Clear();
             context.Response.Redirect("/Login?message=session_expired");
